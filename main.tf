@@ -150,7 +150,7 @@ module "tf_practice_instance_sg_1"{
 */
 
 module "webserver" {
-  source = "./modules/webserver"
+  source = "./modules/instance"
   ami_id = "ami-00197740b3806d968"
   instance_type = "t2.micro"
   associate_public_ip = true
@@ -160,5 +160,5 @@ module "webserver" {
 }
 
 output "webserver" {
-  value = module.webserver.webserver.public_ip
+  value = module.webserver.instance.public_ip
 }
