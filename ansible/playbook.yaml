@@ -1,0 +1,13 @@
+---
+- name: hello world
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+  - name : "echo welcome message"
+    command: echo "Hello World"
+  - name : "install Nginx"
+    become: yes
+    apt:
+      name : ['nginx']
+      state: latest
