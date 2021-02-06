@@ -1,0 +1,34 @@
+{
+    "variables":{
+        "access_key": "{{env `ACCESS_KEY`}}",
+        "secret_key": "{{env `SECRET_KEY`}}",
+        "topping": "mushroom"
+    },
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "access_key": "{{user `access_key`}}",
+            "secret_key": "{{user `secret_key`}}",
+            "region": "us-east-1",
+            "ami_name": "packerAMI",
+            "source_ami": "ami-0885b1f6bd170450c",
+            "instance_type": "t2.micro",
+            "ssh_username": "ubuntu"
+        }
+    ],
+    "provisioners": [
+        {
+            "type":"shell",
+            "inline": [
+                "sleep 30",
+                "sudo apt update",
+                "sudo apt -y install ansible"
+            ]
+        },
+        {
+            "type": "ansible-local",
+            "playbook_file": "../ansible/playbook.yaml",
+            "playbook_dir":"../ansible"
+        }
+    ]
+}
