@@ -13,17 +13,20 @@
             "ami_name": "packerAMI",
             "source_ami": "ami-0885b1f6bd170450c",
             "instance_type": "t2.micro",
-            "ssh_username": "ubuntu"
+            "ssh_username": "ubuntu",
+            "tags": {
+                "environment": "dev",
+                "purpose": "packer-testing"
+            },
+            "snapshot_tags": {
+                "Name": "Packer_ami_snapshot"
+            }
         }
     ],
     "provisioners": [
         {
             "type":"shell",
-            "inline": [
-                "sleep 30",
-                "sudo apt update",
-                "sudo apt -y install ansible"
-            ]
+            "script": "../scripts/ansible.sh"
         },
         {
             "type": "ansible-local",

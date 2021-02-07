@@ -9,3 +9,8 @@ variable "vpc_id" {
 variable "subnet_cidr" {
   type = string
 }
+
+variable "availability_zone" {
+  type = string
+  default =  null
+}
