@@ -12,8 +12,7 @@ resource "aws_autoscaling_group" "asg" {
   }
 
 //   availability_zones = var.availability_zones
-  vpc_zone_identifier  = var.availability_zones
-//   load_balancers = var.load_balancers
+  vpc_zone_identifier  = var.subnet_ids
   target_group_arns = var.target_group_arns
 
   timeouts {

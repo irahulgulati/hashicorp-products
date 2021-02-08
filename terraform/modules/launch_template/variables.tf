@@ -21,3 +21,7 @@ variable "key_name" {
 variable "security_groups_id" {
     type = list(string)
 }
+
+variable "user_data" {
+    default = null
+}

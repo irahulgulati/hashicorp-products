@@ -1,0 +1,19 @@
+---
+- name: install and configure Apache
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+  - name : "install Apache"
+    become: yes
+    apt:
+      name : apache2
+      state: latest
+  - name: "enable apache"
+    systemd:
+      name: apache2
+      enabled: yes
+      state: started
+  - name: 
+    shell: echo "Hello World from $(ip addr show eth0 | awk '$1 == "inet" {gsub(/\/.*$/, "", $2); print $2}')" > /var/www/html/index.html
+    become: yes

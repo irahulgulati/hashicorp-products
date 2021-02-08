@@ -7,6 +7,8 @@ resource "aws_launch_template" "lt" {
 
   vpc_security_group_ids = var.security_groups_id
 
+  user_data = var.user_data
+
   tag_specifications {
     resource_type = "instance"
 
