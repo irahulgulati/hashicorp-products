@@ -14,16 +14,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: cd here
       # validate templates
       - name: Validate Template
         uses: operatehappy/packer-github-actions@master
+        working-directory: ./packer
         with:
           command: validate
-          target: ./packer/app_server.json ./packer/nginx_web_server.json
+          target: app_server.json nginx_web_server.json
 
       # build artifact
       - name: Build Artifact
         uses: operatehappy/packer-github-actions@master
+        working-directory: ./packer
         with:
           command: build
           arguments: "-color=false -on-error=abort"
