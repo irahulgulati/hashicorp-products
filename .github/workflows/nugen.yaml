@@ -27,6 +27,7 @@ jobs:
         uses: operatehappy/packer-github-actions@master
         with:
           command: validate
+          working_directory: ./packer
           target: ./app_server.json ./nginx_web_server.json
 
       # build artifact
