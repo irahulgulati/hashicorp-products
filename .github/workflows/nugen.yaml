@@ -20,6 +20,9 @@ jobs:
         uses: actions/checkout@v2
 
       # validate templates
+      - name: verify directory
+        run: ls
+
       - name: Validate Template
         uses: operatehappy/packer-github-actions@master
         with:
