@@ -37,6 +37,11 @@ variable "lb_private_subnet_2_cidr" {}
 
 variable "app_server_private_subnet_2_cidr" {}
 
+variable  "vpc2_instance_private_ip" {}
+
+variable "vpc_cidr_2" {}
+
+variable "vpc2_public_subnet" {}
 /*
   vpc module that creates
   vpc with given name as 
@@ -47,6 +52,11 @@ module "vpc" {
   vpc_cidr = var.vpc_cidr
 }
 
+module "vpc2" {
+  source = "./modules/vpc"
+  vpc_cidr = var.vpc_cidr_2
+}
+
 /*
   module that creates two
   internet gateway with
@@ -55,7 +65,7 @@ module "vpc" {
 module "internet_gateway"{
   source = "./modules/internet_gateway"
   vpc_id = module.vpc.vpc.id
-  name = "tf_practice_ig"
+  name = "vpc1_ig"
 }
 
 /*
@@ -64,6 +74,14 @@ module "internet_gateway"{
   * attach it to given vpc
   * and given name in tag
 */
+module "vpc2_public_subnet" {
+  source = "./modules/subnet"
+  vpc_id = module.vpc2.vpc.id
+  name = "vpc2_public_subnet"
+  subnet_cidr = var.vpc2_public_subnet
+  availability_zone = "us-east-1a"
+}
+
 module "lb_public_subnet_1" {
   source = "./modules/subnet"
   vpc_id = module.vpc.vpc.id
@@ -150,6 +168,19 @@ module "public_route_table"{
       "transit_gateway_id" : null,
       "vpc_endpoint_id" : null,
       "vpc_peering_connection_id" : null
+    },
+    {
+      "cidr_block" : var.vpc_cidr_2,
+      "egress_only_gateway_id" : null,
+      "gateway_id" : null,
+      "instance_id" : null,
+      "ipv6_cidr_block" : null,
+      "local_gateway_id" : null,
+      "nat_gateway_id" : null,
+      "network_interface_id" : null,
+      "transit_gateway_id" : null,
+      "vpc_endpoint_id" : null,
+      "vpc_peering_connection_id" : module.vpc1_vpc2_peering_connection.peering_connection.id
     }
   ]
 }
@@ -482,7 +513,6 @@ module "app_private_launch_template" {
   shutdown_behavior = "terminate"
   key_name = "tf-practice-aws"
   security_groups_id = [module.appserver_private_sg_1.sg.id]
-  //user_data = filebase64("${path.module}/scripts/apache.sh")
 }
 
 module "app-private_asg-1"{
@@ -498,9 +528,83 @@ module "app-private_asg-1"{
   launch_template_id = module.app_private_launch_template.lt.id
 }
 
-// data "template_file" "lb_dns_name"{
-//   template = "${path.module}/templates/update_private_lb_dns_name.tpl"
-//   vars = {
-//     lb_dns_name = "${module.private_lb_1.lb.dns_name}"
-//   }
-// }
+module "vpc1_vpc2_peering_connection"{
+  source = "./modules/vpc_peering_connection"
+  peer_owner_id = "208269834922"
+  other_vpc_id = module.vpc2.vpc.id
+  own_vpc_id = module.vpc.vpc.id
+  peer_region = null
+  auto_accept = true
+  name = "vpc1_vpc2_peering_connection"
+}
+
+module "vpc2_public_route_table"{
+  source = "./modules/route_table"
+  vpc_id = module.vpc2.vpc.id
+  name = "tf_practice_public_rt"
+  route = [
+    {
+      "cidr_block" : var.vpc_cidr,
+      "egress_only_gateway_id" : null,
+      "gateway_id" : null,
+      "instance_id" : null,
+      "ipv6_cidr_block" : null,
+      "local_gateway_id" : null,
+      "nat_gateway_id" : null,
+      "network_interface_id" : null,
+      "transit_gateway_id" : null,
+      "vpc_endpoint_id" : null,
+      "vpc_peering_connection_id" : module.vpc1_vpc2_peering_connection.peering_connection.id
+    }
+  ]
+}
+
+module "vpc2_instance_sg"{
+  source = "./modules/security_group"
+  vpc_id = module.vpc2.vpc.id
+  ingress_routes = [
+    {
+      "cidr_blocks" : [var.default_cidr],
+      "description" : "allow http from world",
+      "from_port" : 22,
+      "ipv6_cidr_blocks" : null,
+      "prefix_list_ids" : null,
+      "protocol" : "tcp",
+      "security_groups" : null,
+      "self" : null,
+      "to_port" : 22
+    }
+  ]
+  egress_routes = [
+    {
+      "cidr_blocks" : [ var.default_cidr ],
+      "description" : "Allow all",
+      "from_port" : 0,
+      "ipv6_cidr_blocks" : null,
+      "prefix_list_ids" : null,
+      "protocol" : "-1",
+      "security_groups" : null,
+      "self" : null,
+      "to_port" : 0
+    }
+  ]
+  name = "vpc2_instance_sg"
+}
+
+resource "aws_route_table_association" "vpc2_practice_rt_subnet_as" {
+    subnet_id = module.vpc2_public_subnet.subnet.id
+    route_table_id = module.vpc2_public_route_table.rt.id
+  
+}
+
+module "instance_in_vpc2" {
+  source = "./modules/instance"
+  ami_id = "ami-047a51fa27710816e"
+  instance_type = "t2.micro"
+  associate_public_ip =  false
+  subnet_id =  module.vpc2_public_subnet.subnet.id
+  tf_instance_ip_address = var.vpc2_instance_private_ip
+  security_groups = [module.vpc2_instance_sg.sg.id]
+  key_name = "tf-practice-aws"
+}
+

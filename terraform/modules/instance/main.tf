@@ -9,4 +9,5 @@ resource "aws_instance" "tf_practice_instance_1" {
     subnet_id = var.subnet_id
     private_ip = var.tf_instance_ip_address
     security_groups = var.security_groups
+    key_name = var.key_name
 }

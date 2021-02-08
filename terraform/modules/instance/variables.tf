@@ -20,3 +20,7 @@ variable "security_groups"{
 variable "subnet_id" {
     type = string
 }
+
+variable "key_name" {
+    type = string
+}
