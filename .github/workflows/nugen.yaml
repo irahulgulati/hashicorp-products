@@ -14,7 +14,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: cd here
       # validate templates
       - name: Validate Template
         uses: operatehappy/packer-github-actions@master
