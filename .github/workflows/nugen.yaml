@@ -36,6 +36,7 @@ jobs:
           target: ./app_server.json ./nginx_web_server.json
   
   terraform:
+    needs: packer
     runs-on: ubuntu-latest
     name: terraform
     defaults:
