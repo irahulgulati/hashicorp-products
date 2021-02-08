@@ -3,14 +3,14 @@ name: Packer
 on:
   push:
 
+env:
+  ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
 jobs:
   packer:
     runs-on: ubuntu-latest
     name: packer
-    env:
-      ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -34,3 +34,37 @@ jobs:
           working_directory: ./packer
           arguments: "-color=false -on-error=abort"
           target: ./app_server.json ./nginx_web_server.json
+  
+  terraform:
+    runs-on: ubuntu-latest
+    name: terraform
+    defaults:
+      run:
+        working-directory: ./terraform
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.SECRET_KEY}}
+          aws-region: us-east-2
+
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.14.5
+      
+      - name: init terraform
+        id: init
+        run: terraform init
+      
+      - name: plan terraform
+        id: plan
+        run: terraform plan -no-color
+      
+      - name: apply terraform
+        id: apply
+        run: terraform apply -auto-approve
