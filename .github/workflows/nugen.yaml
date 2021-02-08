@@ -3,9 +3,14 @@ name: Packer
 on:
   push:
 
+
 jobs:
   packer:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packer
+
     name: packer
     env:
       ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
@@ -17,7 +22,6 @@ jobs:
       # validate templates
       - name: Validate Template
         uses: operatehappy/packer-github-actions@master
-        working-directory: ./packer
         with:
           command: validate
           target: app_server.json nginx_web_server.json
@@ -25,7 +29,6 @@ jobs:
       # build artifact
       - name: Build Artifact
         uses: operatehappy/packer-github-actions@master
-        working-directory: ./packer
         with:
           command: build
           arguments: "-color=false -on-error=abort"
