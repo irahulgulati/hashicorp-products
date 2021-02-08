@@ -1,0 +1,30 @@
+name: Packer
+
+on:
+  push:
+
+jobs:
+  packer:
+    runs-on: ubuntu-latest
+    name: packer
+    env:
+      ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # validate templates
+      - name: Validate Template
+        uses: operatehappy/packer-github-actions@master
+        with:
+          command: validate
+          target: ./packer/app_server.json ./packer/nginx_web_server.json
+
+      # build artifact
+      - name: Build Artifact
+        uses: operatehappy/packer-github-actions@master
+        with:
+          command: build
+          arguments: "-color=false -on-error=abort"
+          target: ./packer/app_server.json ./packer/nginx_web_server.json
