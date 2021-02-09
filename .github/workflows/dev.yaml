@@ -10,7 +10,7 @@ env:
 
 jobs:
   packer:
-    if: ${{ env.SKIP_PACKER }}
+    if: env.SKIP_PACKER
     runs-on: ubuntu-latest
     name: packer
     steps:
