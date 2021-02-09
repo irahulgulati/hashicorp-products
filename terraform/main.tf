@@ -1,59 +1,19 @@
-provider "aws"{
-    region = "us-east-1"
+
+provider "aws" {
+  region = "us-east-1"
 }
-
-/*
-  variables to set vpc networking
-*/
-
-variable "vpc_cidr"{
-  description= "vpc cidr range"
-}
-
-
-variable "tf_instance_ip_address" {
-  description = "ip address for public tf_practice instance"
-}
-
-variable "default_cidr" {
-  description = "default route"
-}
-
-variable "lb_public_subnet_1_cidr" {
-  description = "public load balancer subnet"
-}
-
-variable "nginx_private_subnet_cidr" {}
-
-variable "lb_private_subnet_cidr" {}
-
-variable "app_server_private_subnet_cidr" {}
-
-variable "lb_public_subnet_2_cidr" {}
-
-variable "nginx_private_subnet_2_cidr" {}
-
-variable "lb_private_subnet_2_cidr" {}
-
-variable "app_server_private_subnet_2_cidr" {}
-
-variable  "vpc2_instance_private_ip" {}
-
-variable "vpc_cidr_2" {}
-
-variable "vpc2_public_subnet" {}
-/*
-  vpc module that creates
-  vpc with given name as 
-  argument in tag
-*/
+// /*
+//   vpc module that creates
+//   vpc with given name as 
+//   argument in tag
+// */
 module "vpc" {
-  source = "./modules/vpc"
+  source   = "./modules/vpc"
   vpc_cidr = var.vpc_cidr
 }
 
 module "vpc2" {
-  source = "./modules/vpc"
+  source   = "./modules/vpc"
   vpc_cidr = var.vpc_cidr_2
 }
 
@@ -62,10 +22,10 @@ module "vpc2" {
   internet gateway with
   given name in tag
 */
-module "internet_gateway"{
+module "internet_gateway" {
   source = "./modules/internet_gateway"
   vpc_id = module.vpc.vpc.id
-  name = "vpc1_ig"
+  name   = "vpc1_ig"
 }
 
 /*
@@ -75,74 +35,74 @@ module "internet_gateway"{
   * and given name in tag
 */
 module "vpc2_public_subnet" {
-  source = "./modules/subnet"
-  vpc_id = module.vpc2.vpc.id
-  name = "vpc2_public_subnet"
-  subnet_cidr = var.vpc2_public_subnet
+  source            = "./modules/subnet"
+  vpc_id            = module.vpc2.vpc.id
+  name              = "vpc2_public_subnet"
+  subnet_cidr       = var.vpc2_public_subnet
   availability_zone = "us-east-1a"
 }
 
 module "lb_public_subnet_1" {
-  source = "./modules/subnet"
-  vpc_id = module.vpc.vpc.id
-  name = "tf_public_subnet"
-  subnet_cidr = var.lb_public_subnet_1_cidr
+  source            = "./modules/subnet"
+  vpc_id            = module.vpc.vpc.id
+  name              = "tf_public_subnet"
+  subnet_cidr       = var.lb_public_subnet_1_cidr
   availability_zone = "us-east-1a"
 }
 
 module "nginx_private_subnet" {
-  source = "./modules/subnet"
-  vpc_id = module.vpc.vpc.id
-  name = "nginx_private_subnet"
-  subnet_cidr = var.nginx_private_subnet_cidr
+  source            = "./modules/subnet"
+  vpc_id            = module.vpc.vpc.id
+  name              = "nginx_private_subnet"
+  subnet_cidr       = var.nginx_private_subnet_cidr
   availability_zone = "us-east-1a"
 }
 
 module "lb_private_subnet" {
-  source = "./modules/subnet"
-  vpc_id = module.vpc.vpc.id
-  name = "lb_private_subnet"
-  subnet_cidr = var.lb_private_subnet_cidr
+  source            = "./modules/subnet"
+  vpc_id            = module.vpc.vpc.id
+  name              = "lb_private_subnet"
+  subnet_cidr       = var.lb_private_subnet_cidr
   availability_zone = "us-east-1a"
 }
 
 module "app_server_private_subnet" {
-  source = "./modules/subnet"
-  vpc_id = module.vpc.vpc.id
-  name = "app_server_private_subnet"
-  subnet_cidr = var.app_server_private_subnet_cidr
+  source            = "./modules/subnet"
+  vpc_id            = module.vpc.vpc.id
+  name              = "app_server_private_subnet"
+  subnet_cidr       = var.app_server_private_subnet_cidr
   availability_zone = "us-east-1a"
 }
 
 module "lb_public_subnet_2" {
-  source = "./modules/subnet"
-  vpc_id = module.vpc.vpc.id
-  name = "lb_public_subnet_2"
-  subnet_cidr = var.lb_public_subnet_2_cidr
+  source            = "./modules/subnet"
+  vpc_id            = module.vpc.vpc.id
+  name              = "lb_public_subnet_2"
+  subnet_cidr       = var.lb_public_subnet_2_cidr
   availability_zone = "us-east-1b"
 }
 
 module "nginx_private_subnet_2" {
-  source = "./modules/subnet"
-  vpc_id = module.vpc.vpc.id
-  name = "nginx_private_subnet_2"
-  subnet_cidr = var.nginx_private_subnet_2_cidr
+  source            = "./modules/subnet"
+  vpc_id            = module.vpc.vpc.id
+  name              = "nginx_private_subnet_2"
+  subnet_cidr       = var.nginx_private_subnet_2_cidr
   availability_zone = "us-east-1b"
 }
 
 module "lb_private_subnet_2" {
-  source = "./modules/subnet"
-  vpc_id = module.vpc.vpc.id
-  name = "lb_private_subnet_2"
-  subnet_cidr = var.lb_private_subnet_2_cidr
+  source            = "./modules/subnet"
+  vpc_id            = module.vpc.vpc.id
+  name              = "lb_private_subnet_2"
+  subnet_cidr       = var.lb_private_subnet_2_cidr
   availability_zone = "us-east-1b"
 }
 
 module "app_server_private_subnet_2" {
-  source = "./modules/subnet"
-  vpc_id = module.vpc.vpc.id
-  name = "app_server_private_subnet_2"
-  subnet_cidr = var.app_server_private_subnet_2_cidr
+  source            = "./modules/subnet"
+  vpc_id            = module.vpc.vpc.id
+  name              = "app_server_private_subnet_2"
+  subnet_cidr       = var.app_server_private_subnet_2_cidr
   availability_zone = "us-east-1b"
 }
 /*
@@ -151,10 +111,10 @@ module "app_server_private_subnet_2" {
   attach it to given vpc
   and given name in tag
 */
-module "public_route_table"{
+module "public_route_table" {
   source = "./modules/route_table"
   vpc_id = module.vpc.vpc.id
-  name = "tf_practice_public_rt"
+  name   = "tf_practice_public_rt"
   route = [
     {
       "cidr_block" : var.default_cidr,
@@ -188,8 +148,8 @@ module "public_route_table"{
 module "public_route_table_2" {
   source = "./modules/route_table"
   vpc_id = module.vpc.vpc.id
-  name = "lb_public_rt_2"
-  route  = [
+  name   = "lb_public_rt_2"
+  route = [
     {
       "cidr_block" : var.default_cidr,
       "egress_only_gateway_id" : null,
@@ -211,14 +171,14 @@ module "public_route_table_2" {
   association with subnet
 */
 resource "aws_route_table_association" "tf_practice_rt_subnet_as" {
-    subnet_id = module.lb_public_subnet_1.subnet.id
-    route_table_id = module.public_route_table.rt.id
-  
+  subnet_id      = module.lb_public_subnet_1.subnet.id
+  route_table_id = module.public_route_table.rt.id
+
 }
 
-resource "aws_route_table_association" "lb_public_rt_subnet_as"{
-  subnet_id =  module.lb_public_subnet_2.subnet.id
-  route_table_id =  module.public_route_table_2.rt.id
+resource "aws_route_table_association" "lb_public_rt_subnet_as" {
+  subnet_id      = module.lb_public_subnet_2.subnet.id
+  route_table_id = module.public_route_table_2.rt.id
 }
 
 /*
@@ -229,12 +189,12 @@ resource "aws_route_table_association" "lb_public_rt_subnet_as"{
   and given name in tag
 */
 
-module "lb_public_sg_1"{
+module "lb_public_sg_1" {
   source = "./modules/security_group"
   vpc_id = module.vpc.vpc.id
   ingress_routes = [
     {
-      "cidr_blocks" : [var.default_cidr ],
+      "cidr_blocks" : [var.default_cidr],
       "description" : "allow http from world",
       "from_port" : 80,
       "ipv6_cidr_blocks" : null,
@@ -247,7 +207,7 @@ module "lb_public_sg_1"{
   ]
   egress_routes = [
     {
-      "cidr_blocks" : [ var.default_cidr ],
+      "cidr_blocks" : [var.default_cidr],
       "description" : "Allow all",
       "from_port" : 0,
       "ipv6_cidr_blocks" : null,
@@ -261,7 +221,7 @@ module "lb_public_sg_1"{
   name = "lb_public_sg_1"
 }
 
-module "webserver_private_sg_1"{
+module "webserver_private_sg_1" {
   source = "./modules/security_group"
   vpc_id = module.vpc.vpc.id
   ingress_routes = [
@@ -279,7 +239,7 @@ module "webserver_private_sg_1"{
   ]
   egress_routes = [
     {
-      "cidr_blocks" : [ var.default_cidr ],
+      "cidr_blocks" : [var.default_cidr],
       "description" : "Allow all",
       "from_port" : 0,
       "ipv6_cidr_blocks" : null,
@@ -293,7 +253,7 @@ module "webserver_private_sg_1"{
   name = "webserver_private_sg_1"
 }
 
-module "webserver_private_sg_2"{
+module "webserver_private_sg_2" {
   source = "./modules/security_group"
   vpc_id = module.vpc.vpc.id
   ingress_routes = [
@@ -311,7 +271,7 @@ module "webserver_private_sg_2"{
   ]
   egress_routes = [
     {
-      "cidr_blocks" : [ var.default_cidr ],
+      "cidr_blocks" : [var.default_cidr],
       "description" : "Allow all",
       "from_port" : 0,
       "ipv6_cidr_blocks" : null,
@@ -325,7 +285,7 @@ module "webserver_private_sg_2"{
   name = "webserver_private_sg_2"
 }
 
-module "lb_private_sg_1"{
+module "lb_private_sg_1" {
   source = "./modules/security_group"
   vpc_id = module.vpc.vpc.id
   ingress_routes = [
@@ -343,7 +303,7 @@ module "lb_private_sg_1"{
   ]
   egress_routes = [
     {
-      "cidr_blocks" : [ var.default_cidr ],
+      "cidr_blocks" : [var.default_cidr],
       "description" : "Allow all",
       "from_port" : 0,
       "ipv6_cidr_blocks" : null,
@@ -357,7 +317,7 @@ module "lb_private_sg_1"{
   name = "lb_private_sg_1"
 }
 
-module "appserver_private_sg_1"{
+module "appserver_private_sg_1" {
   source = "./modules/security_group"
   vpc_id = module.vpc.vpc.id
   ingress_routes = [
@@ -375,7 +335,7 @@ module "appserver_private_sg_1"{
   ]
   egress_routes = [
     {
-      "cidr_blocks" : [ var.default_cidr ],
+      "cidr_blocks" : [var.default_cidr],
       "description" : "Allow all",
       "from_port" : 0,
       "ipv6_cidr_blocks" : null,
@@ -390,20 +350,20 @@ module "appserver_private_sg_1"{
 }
 
 module "public_lb_tg" {
-  source = "./modules/target_groups"
-  name = "public-lb-1-tg"
-  port = 80
+  source   = "./modules/target_groups"
+  name     = "public-lb-1-tg"
+  port     = 80
   protocol = "HTTP"
-  vpc_id = module.vpc.vpc.id
+  vpc_id   = module.vpc.vpc.id
 }
 
 module "public_lb_1" {
-  source = "./modules/load_balancer"
-  name = "public-lb-1"
-  internal =  false
+  source             = "./modules/load_balancer"
+  name               = "public-lb-1"
+  internal           = false
   load_balancer_type = "application"
-  security_groups = [module.lb_public_sg_1.sg.id]
-  subnet_id = [module.lb_public_subnet_1.subnet.id, module.lb_public_subnet_2.subnet.id]
+  security_groups    = [module.lb_public_sg_1.sg.id]
+  subnet_id          = [module.lb_public_subnet_1.subnet.id, module.lb_public_subnet_2.subnet.id]
 
   enable_deletion_protection = false
 
@@ -422,20 +382,20 @@ resource "aws_lb_listener" "lb_endpoint_1" {
 }
 
 module "private_lb_tg" {
-  source = "./modules/target_groups"
-  name = "private-lb-1-tg"
-  port = 80
+  source   = "./modules/target_groups"
+  name     = "private-lb-1-tg"
+  port     = 80
   protocol = "HTTP"
-  vpc_id = module.vpc.vpc.id
+  vpc_id   = module.vpc.vpc.id
 }
 
 module "private_lb_1" {
-  source = "./modules/load_balancer"
-  name = "private-lb-1"
-  internal =  true
+  source             = "./modules/load_balancer"
+  name               = "private-lb-1"
+  internal           = true
   load_balancer_type = "application"
-  security_groups = [module.lb_private_sg_1.sg.id]
-  subnet_id = [module.lb_private_subnet.subnet.id, module.lb_private_subnet_2.subnet.id]
+  security_groups    = [module.lb_private_sg_1.sg.id]
+  subnet_id          = [module.lb_private_subnet.subnet.id, module.lb_private_subnet_2.subnet.id]
 
   enable_deletion_protection = false
 
@@ -453,12 +413,12 @@ resource "aws_lb_listener" "lb_endpoint_2" {
   }
 }
 
-data  "aws_ami" "nginx_ami" {
+data "aws_ami" "nginx_ami" {
   most_recent = true
 
   filter {
-    name = "name"
-    values =  ["packerAMI"]
+    name   = "name"
+    values = ["packerAMI"]
   }
 
   owners = ["208269834922"]
@@ -468,7 +428,7 @@ data "aws_ami" "app_server_ami" {
   most_recent = true
 
   filter {
-    name = "name"
+    name   = "name"
     values = ["packerApacheAMI"]
   }
 
@@ -476,72 +436,72 @@ data "aws_ami" "app_server_ami" {
 }
 
 module "nginx_public_launch_template" {
-  source = "./modules/launch_template"
-  name = "nginx_public_launch_template"
-  ami =  data.aws_ami.nginx_ami.id
-  instance_type = "t2.micro"
-  shutdown_behavior = "terminate"
-  key_name = "tf-practice-aws"
+  source             = "./modules/launch_template"
+  name               = "nginx_public_launch_template"
+  ami                = data.aws_ami.nginx_ami.id
+  instance_type      = "t2.micro"
+  shutdown_behavior  = "terminate"
+  key_name           = "tf-practice-aws"
   security_groups_id = [module.webserver_private_sg_1.sg.id]
   depends_on = [
     module.private_lb_1
   ]
   user_data = base64encode(templatefile("${path.module}/templates/update_private_lb_dns_name.tpl", {
     lb_dns_name : module.private_lb_1.lb.dns_name
-  }
+    }
   ))
 }
 
-module "nginx-private_asg-1"{
-  source = "./modules/auto_scaling_group"
-  name = "nginx-private_asg-1"
-  max_size = 2
-  min_size = 2
-  health_check_type = "ELB"
-  desired_capacity = 2
-  force_delete = true
-  subnet_ids = [module.nginx_private_subnet.subnet.id, module.nginx_private_subnet_2.subnet.id]
-  target_group_arns = [module.public_lb_tg.tg.arn]
+module "nginx-private_asg-1" {
+  source             = "./modules/auto_scaling_group"
+  name               = "nginx-private_asg-1"
+  max_size           = 2
+  min_size           = 2
+  health_check_type  = "ELB"
+  desired_capacity   = 2
+  force_delete       = true
+  subnet_ids         = [module.nginx_private_subnet.subnet.id, module.nginx_private_subnet_2.subnet.id]
+  target_group_arns  = [module.public_lb_tg.tg.arn]
   launch_template_id = module.nginx_public_launch_template.lt.id
 }
 
 module "app_private_launch_template" {
-  source = "./modules/launch_template"
-  name = "app_private_launch_template"
-  ami =  data.aws_ami.app_server_ami.id
-  instance_type = "t2.micro"
-  shutdown_behavior = "terminate"
-  key_name = "tf-practice-aws"
+  source             = "./modules/launch_template"
+  name               = "app_private_launch_template"
+  ami                = data.aws_ami.app_server_ami.id
+  instance_type      = "t2.micro"
+  shutdown_behavior  = "terminate"
+  key_name           = "tf-practice-aws"
   security_groups_id = [module.appserver_private_sg_1.sg.id]
 }
 
-module "app-private_asg-1"{
-  source = "./modules/auto_scaling_group"
-  name = "app-private_asg-1"
-  max_size = 2
-  min_size = 2
-  health_check_type = "ELB"
-  desired_capacity = 2
-  force_delete = true
-  subnet_ids = [module.app_server_private_subnet.subnet.id, module.app_server_private_subnet_2.subnet.id]
-  target_group_arns = [module.private_lb_tg.tg.arn]
+module "app-private_asg-1" {
+  source             = "./modules/auto_scaling_group"
+  name               = "app-private_asg-1"
+  max_size           = 2
+  min_size           = 2
+  health_check_type  = "ELB"
+  desired_capacity   = 2
+  force_delete       = true
+  subnet_ids         = [module.app_server_private_subnet.subnet.id, module.app_server_private_subnet_2.subnet.id]
+  target_group_arns  = [module.private_lb_tg.tg.arn]
   launch_template_id = module.app_private_launch_template.lt.id
 }
 
-module "vpc1_vpc2_peering_connection"{
-  source = "./modules/vpc_peering_connection"
+module "vpc1_vpc2_peering_connection" {
+  source        = "./modules/vpc_peering_connection"
   peer_owner_id = "208269834922"
-  other_vpc_id = module.vpc2.vpc.id
-  own_vpc_id = module.vpc.vpc.id
-  peer_region = null
-  auto_accept = true
-  name = "vpc1_vpc2_peering_connection"
+  other_vpc_id  = module.vpc2.vpc.id
+  own_vpc_id    = module.vpc.vpc.id
+  peer_region   = null
+  auto_accept   = true
+  name          = "vpc1_vpc2_peering_connection"
 }
 
-module "vpc2_public_route_table"{
+module "vpc2_public_route_table" {
   source = "./modules/route_table"
   vpc_id = module.vpc2.vpc.id
-  name = "tf_practice_public_rt"
+  name   = "tf_practice_public_rt"
   route = [
     {
       "cidr_block" : var.vpc_cidr,
@@ -559,7 +519,7 @@ module "vpc2_public_route_table"{
   ]
 }
 
-module "vpc2_instance_sg"{
+module "vpc2_instance_sg" {
   source = "./modules/security_group"
   vpc_id = module.vpc2.vpc.id
   ingress_routes = [
@@ -577,7 +537,7 @@ module "vpc2_instance_sg"{
   ]
   egress_routes = [
     {
-      "cidr_blocks" : [ var.default_cidr ],
+      "cidr_blocks" : [var.default_cidr],
       "description" : "Allow all",
       "from_port" : 0,
       "ipv6_cidr_blocks" : null,
@@ -592,19 +552,19 @@ module "vpc2_instance_sg"{
 }
 
 resource "aws_route_table_association" "vpc2_practice_rt_subnet_as" {
-    subnet_id = module.vpc2_public_subnet.subnet.id
-    route_table_id = module.vpc2_public_route_table.rt.id
-  
+  subnet_id      = module.vpc2_public_subnet.subnet.id
+  route_table_id = module.vpc2_public_route_table.rt.id
+
 }
 
 module "instance_in_vpc2" {
-  source = "./modules/instance"
-  ami_id = "ami-047a51fa27710816e"
-  instance_type = "t2.micro"
-  associate_public_ip =  false
-  subnet_id =  module.vpc2_public_subnet.subnet.id
+  source                 = "./modules/instance"
+  ami_id                 = "ami-047a51fa27710816e"
+  instance_type          = "t2.micro"
+  associate_public_ip    = false
+  subnet_id              = module.vpc2_public_subnet.subnet.id
   tf_instance_ip_address = var.vpc2_instance_private_ip
-  security_groups = [module.vpc2_instance_sg.sg.id]
-  key_name = "tf-practice-aws"
+  security_groups        = [module.vpc2_instance_sg.sg.id]
+  key_name               = "tf-practice-aws"
 }
 

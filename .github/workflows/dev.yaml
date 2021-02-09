@@ -6,9 +6,11 @@ on:
 env:
   ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  SKIP_PACKER: false
 
 jobs:
   packer:
+    if: ${{ env.SKIP_PACKER }}
     runs-on: ubuntu-latest
     name: packer
     steps:
