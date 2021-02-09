@@ -8,17 +8,14 @@ jobs:
     env:
       SKIP_PACKER: false
 
-    if: env.SKIP_PACKER == true
     runs-on: ubuntu-latest
     name: packer
     steps:
+      if: env.SKIP_PACKER
       - name: Checkout Repository
         uses: actions/checkout@v2
-
-      # validate templates
-      - name: verify directory
-        run: ls
-
+      
+      if: env.SKIP_PACKER
       - name: Validate Template
         uses: operatehappy/packer-github-actions@master
         with:
@@ -26,7 +23,7 @@ jobs:
           working_directory: ./packer
           target: ./app_server.json ./nginx_web_server.json
 
-      # build artifact
+      if: env.SKIP_PACKER
       - name: Build Artifact
         uses: operatehappy/packer-github-actions@master
         with:
