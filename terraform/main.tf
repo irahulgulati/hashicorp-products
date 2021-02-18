@@ -499,7 +499,7 @@ module "app-private_asg-1" {
 
 module "vpc1_vpc2_peering_connection" {
   source        = "./modules/vpc_peering_connection"
-  peer_owner_id = "208269834922"
+  peer_owner_id = "271886995284"
   other_vpc_id  = module.vpc2.vpc.id
   own_vpc_id    = module.vpc.vpc.id
   peer_region   = null
@@ -588,7 +588,7 @@ module "vpc2_efs_sg" {
       "from_port" : 2049,
       "ipv6_cidr_blocks" : null,
       "prefix_list_ids" : null,
-      "protocol" : "nfs",
+      "protocol" : "tcp",
       "security_groups" : [module.webserver_private_sg_1.sg.id],
       "self" : null,
       "to_port" : 2049
