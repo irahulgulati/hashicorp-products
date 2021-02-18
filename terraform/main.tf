@@ -9,7 +9,7 @@ terraform {
 
 
 provider "aws" {
-  region = "us-east-1"
+  region  = "us-east-1"
 }
 // /*
 //   vpc module that creates
@@ -43,11 +43,11 @@ module "internet_gateway" {
   * attach it to given vpc
   * and given name in tag
 */
-module "vpc2_public_subnet" {
+module "vpc2_private_subnet" {
   source            = "./modules/subnet"
   vpc_id            = module.vpc2.vpc.id
-  name              = "vpc2_public_subnet"
-  subnet_cidr       = var.vpc2_public_subnet
+  name              = "vpc2_private_subnet"
+  subnet_cidr       = var.vpc2_private_subnet
   availability_zone = "us-east-1a"
 }
 
@@ -507,7 +507,7 @@ module "vpc1_vpc2_peering_connection" {
   name          = "vpc1_vpc2_peering_connection"
 }
 
-module "vpc2_public_route_table" {
+module "vpc2_private_route_table" {
   source = "./modules/route_table"
   vpc_id = module.vpc2.vpc.id
   name   = "tf_practice_public_rt"
@@ -561,8 +561,8 @@ module "vpc2_instance_sg" {
 }
 
 resource "aws_route_table_association" "vpc2_practice_rt_subnet_as" {
-  subnet_id      = module.vpc2_public_subnet.subnet.id
-  route_table_id = module.vpc2_public_route_table.rt.id
+  subnet_id      = module.vpc2_private_subnet.subnet.id
+  route_table_id = module.vpc2_private_route_table.rt.id
 
 }
 
@@ -571,9 +571,48 @@ module "instance_in_vpc2" {
   ami_id                 = "ami-047a51fa27710816e"
   instance_type          = "t2.micro"
   associate_public_ip    = false
-  subnet_id              = module.vpc2_public_subnet.subnet.id
+  subnet_id              = module.vpc2_private_subnet.subnet.id
   tf_instance_ip_address = var.vpc2_instance_private_ip
   security_groups        = [module.vpc2_instance_sg.sg.id]
   key_name               = "tf-practice-aws"
 }
 
+
+module "vpc2_efs_sg" {
+  source = "./modules/security_group"
+  vpc_id = module.vpc2.vpc.id
+  ingress_routes = [
+    {
+      "cidr_blocks" : null,
+      "description" : "allow from vpc1 public servers",
+      "from_port" : 2049,
+      "ipv6_cidr_blocks" : null,
+      "prefix_list_ids" : null,
+      "protocol" : "nfs",
+      "security_groups" : [module.webserver_private_sg_1.sg.id],
+      "self" : null,
+      "to_port" : 2049
+    }
+  ]
+  egress_routes = [
+    {
+      "cidr_blocks" : [var.default_cidr],
+      "description" : "Allow all",
+      "from_port" : 0,
+      "ipv6_cidr_blocks" : null,
+      "prefix_list_ids" : null,
+      "protocol" : "-1",
+      "security_groups" : null,
+      "self" : null,
+      "to_port" : 0
+    }
+  ]
+  name = "vpc2_efs_sg"
+}
+
+module "vpc2_efs" {
+  source          = "./modules/efs"
+  efs_token       = "nugen-efs"
+  subnet_id       = module.vpc2_private_subnet.subnet.id
+  security_groups = [module.vpc2_efs_sg.sg.id]
+}

@@ -37,4 +37,4 @@ variable "vpc2_instance_private_ip" {}
 
 variable "vpc_cidr_2" {}
 
-variable "vpc2_public_subnet" {}
+variable "vpc2_private_subnet" {}

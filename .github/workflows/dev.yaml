@@ -31,6 +31,9 @@ jobs:
           working_directory: ./packer
           arguments: "-color=false -on-error=abort"
           target: ./app_server.json ./nginx_web_server.json
+        env:
+          ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
   
   terraform:
     needs: packer
