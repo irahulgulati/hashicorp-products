@@ -430,7 +430,7 @@ data "aws_ami" "nginx_ami" {
     values = ["packerAMI"]
   }
 
-  owners = ["208269834922"]
+  owners = ["271886995284"]
 }
 
 data "aws_ami" "app_server_ami" {
@@ -441,7 +441,7 @@ data "aws_ami" "app_server_ami" {
     values = ["packerApacheAMI"]
   }
 
-  owners = ["208269834922"]
+  owners = ["271886995284"]
 }
 
 module "nginx_public_launch_template" {

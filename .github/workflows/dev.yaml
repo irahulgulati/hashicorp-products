@@ -6,7 +6,7 @@ on:
 jobs:
   packer:
     env:
-      SKIP_PACKER: true
+      SKIP_PACKER: false
 
     runs-on: ubuntu-latest
     name: packer
